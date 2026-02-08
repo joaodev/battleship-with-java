@@ -8,47 +8,48 @@ public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         Game game = new Game(10);
-        game.printBoard(false);
 
-        for (ShipType shipType : ShipType.ORDER) {
-            placeShipLoop(scanner, game, shipType);
-        }
+        placeShipsForPlayer(scanner, game);
 
-        printGameStats(game);
+        System.out.println("The game starts!");
+        System.out.println();
         shootLoop(scanner, game);
     }
 
     private static void shootLoop(Scanner scanner, Game game) {
         while (true) {
-            System.out.println("Take a shot!");
+            game.printBoard(true);
             System.out.println();
-
+            System.out.println("Take a shot!");
             Coordinate shot = readShotCoordinate(scanner, game.getSize());
             ShotResult result = game.shoot(shot);
 
-            System.out.println();
-            game.printBoard(true);
-            System.out.println();
-
             if (result == ShotResult.MISS) {
-                System.out.println("You missed. Try again:");
-                System.out.println();
-                continue;
-            }
-
-            if (game.justSankAsShip()) {
+                System.out.println("You missed!");
+            } else if (game.justSankAsShip()) {
                 if (game.allShipsSunk()) {
                     System.out.println("You sank the last ship. You won. Congratulations!");
-                    break;
                 } else {
-                    System.out.println("You sank a ship! Specify a new target:");
-                    System.out.println();
-                    continue;
+                    System.out.println("You sank a ship!");
                 }
             } else {
-                System.out.println("You hit a ship! Try again:");
-                System.out.println();
+                System.out.println("You hit a ship!");
             }
+            System.out.println();
+            game.printBoard(true);
+
+            if (game.allShipsSunk()) {
+                break;
+            }
+            System.out.println();
+        }
+    }
+
+    private static void placeShipsForPlayer(Scanner scanner, Game game) {
+        game.printBoard(false);
+
+        for (ShipType shipType : ShipType.ORDER) {
+            placeShipLoop(scanner, game, shipType);
         }
     }
 
@@ -118,14 +119,6 @@ public class Main {
     private static void printWrongLocation() {
         System.out.println();
         System.out.println("Error! Wrong ship location! Try again:");
-        System.out.println();
-    }
-
-    private static void printGameStats(Game game) {
-        System.out.println();
-        System.out.println("The game starts!");
-        System.out.println();
-        game.printBoard(true);
         System.out.println();
     }
 }
