@@ -7,7 +7,6 @@ public class Board {
 
     final int size;
     final char[][] grid;
-    private boolean hitLastShot = false;
 
     Board(int size) {
         this.size = size;
@@ -56,26 +55,12 @@ public class Board {
         return false;
     }
 
-    boolean applyShot(Coordinate target) {
-        int r = target.row();
-        int c = target.col();
-
-        char cur = grid[r][c];
-
-        if (cur == 'O') {
-            grid[r][c] = 'X';
-            return true;
-        }
-        if (cur == '~') {
-            grid[r][c] = 'M';
-            return false;
-        }
-
-        return cur == 'X';
+    char get(Coordinate cell) {
+        return grid[cell.row()][cell.col()];
     }
 
-    boolean wasHitLastShot() {
-        return hitLastShot;
+    void set(Coordinate cell, char ch) {
+        grid[cell.row()][cell.col()] = ch;
     }
 
     private boolean inBounds(int r, int c) {

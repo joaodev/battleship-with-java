@@ -7,35 +7,52 @@ public class Main {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        Board board = new Board(10);
-        board.print(false);
+        Game game = new Game(10);
+        game.printBoard(false);
 
         for (ShipType shipType : ShipType.ORDER) {
-            placeShipLoop(scanner, board, shipType);
+            placeShipLoop(scanner, game, shipType);
         }
 
-        System.out.println();
-        System.out.println("The game starts!");
-        System.out.println();
-        board.print(true);
-        System.out.println();
-        System.out.println("Take a shot!");
-        System.out.println();
-
-        Coordinate target = readShotCoordinate(scanner, board.getSize());
-        boolean hit = board.applyShot(target);
-
-        System.out.println();
-        board.print(true);
-        System.out.println();
-
-        System.out.println(hit ? "You hit a ship!" : "You missed!");
-        System.out.println();
-
-        board.print(false);
+        printGameStats(game);
+        shootLoop(scanner, game);
     }
 
-    private static void placeShipLoop(Scanner scanner, Board board, ShipType shipType) {
+    private static void shootLoop(Scanner scanner, Game game) {
+        while (true) {
+            System.out.println("Take a shot!");
+            System.out.println();
+
+            Coordinate shot = readShotCoordinate(scanner, game.getSize());
+            ShotResult result = game.shoot(shot);
+
+            System.out.println();
+            game.printBoard(true);
+            System.out.println();
+
+            if (result == ShotResult.MISS) {
+                System.out.println("You missed. Try again:");
+                System.out.println();
+                continue;
+            }
+
+            if (game.justSankAsShip()) {
+                if (game.allShipsSunk()) {
+                    System.out.println("You sank the last ship. You won. Congratulations!");
+                    break;
+                } else {
+                    System.out.println("You sank a ship! Specify a new target:");
+                    System.out.println();
+                    continue;
+                }
+            } else {
+                System.out.println("You hit a ship! Try again:");
+                System.out.println();
+            }
+        }
+    }
+
+    private static void placeShipLoop(Scanner scanner, Game game, ShipType shipType) {
         while (true) {
             System.out.printf("%nEnter the coordinates of the %s (%d cells):%n%n",
                     shipType.getDisplayName(), shipType.getLength());
@@ -46,8 +63,8 @@ public class Main {
                 continue;
             }
 
-            Coordinate a = Coordinate.parse(t[0], board.getSize());
-            Coordinate b = Coordinate.parse(t[1], board.getSize());
+            Coordinate a = Coordinate.parse(t[0], game.getSize());
+            Coordinate b = Coordinate.parse(t[1], game.getSize());
             if (a == null || b == null) {
                 printWrongLocation();
                 continue;
@@ -68,16 +85,16 @@ public class Main {
                 continue;
             }
 
-            if (board.isTooClose(placement.getCells())) {
+            if (game.isTooClose(placement.getCells())) {
                 System.out.println();
                 System.out.println("Error! You placed it too close to another one. Try again:");
                 System.out.println();
                 continue;
             }
 
-            board.place(placement.getCells());
+            game.placeShip(shipType, placement.getCells());
             System.out.println();
-            board.print(false);
+            game.printBoard(false);
             break;
         }
     }
@@ -101,6 +118,14 @@ public class Main {
     private static void printWrongLocation() {
         System.out.println();
         System.out.println("Error! Wrong ship location! Try again:");
+        System.out.println();
+    }
+
+    private static void printGameStats(Game game) {
+        System.out.println();
+        System.out.println("The game starts!");
+        System.out.println();
+        game.printBoard(true);
         System.out.println();
     }
 }
