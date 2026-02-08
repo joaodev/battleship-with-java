@@ -19,11 +19,11 @@ public enum ShipType {
         this.length = length;
     }
 
-    String displayName() {
+    String getDisplayName() {
         return displayName;
     }
 
-    int length() {
+    int getLength() {
         return length;
     }
 }

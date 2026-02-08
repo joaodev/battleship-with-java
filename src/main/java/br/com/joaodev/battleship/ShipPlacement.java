@@ -28,11 +28,11 @@ public final class ShipPlacement {
         return new ShipPlacement(Collections.unmodifiableList(list));
     }
 
-    int length() {
+    int getLength() {
         return cells.size();
     }
 
-    List<Coordinate> cells() {
+    List<Coordinate> getCells() {
         return cells;
     }
 }
