@@ -21,7 +21,7 @@ public class Board {
         return size;
     }
 
-    void print() {
+    void print(boolean fog) {
         System.out.print("  ");
         for (int i = 1; i <= size; i++) System.out.print(i + (i == size ? "" : " "));
         System.out.println();
@@ -29,7 +29,9 @@ public class Board {
         for (int r = 0; r < size; r++) {
             System.out.print((char) ('A' + r) + " ");
             for (int c = 0; c < size; c++) {
-                System.out.print(grid[r][c] + (c == size - 1 ? "" : " "));
+                char ch = grid[r][c];
+                if (fog && ch == 'O') ch = '~';
+                System.out.print(ch + (c == size - 1 ? "" : " "));
             }
             System.out.println();
         }
@@ -54,7 +56,7 @@ public class Board {
         return false;
     }
 
-    void applyShot(Coordinate target) {
+    boolean applyShot(Coordinate target) {
         int r = target.row();
         int c = target.col();
 
@@ -62,15 +64,14 @@ public class Board {
 
         if (cur == 'O') {
             grid[r][c] = 'X';
-            hitLastShot = true;
-        } else if (cur == '~') {
-            grid[r][c] = 'M';
-            hitLastShot = false;
-        } else if (cur == 'X') {
-            hitLastShot = true;
-        } else if (cur == 'M') {
-            hitLastShot = false;
+            return true;
         }
+        if (cur == '~') {
+            grid[r][c] = 'M';
+            return false;
+        }
+
+        return cur == 'X';
     }
 
     boolean wasHitLastShot() {

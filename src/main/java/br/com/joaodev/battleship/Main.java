@@ -8,7 +8,7 @@ public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         Board board = new Board(10);
-        board.print();
+        board.print(false);
 
         for (ShipType shipType : ShipType.ORDER) {
             placeShipLoop(scanner, board, shipType);
@@ -17,23 +17,22 @@ public class Main {
         System.out.println();
         System.out.println("The game starts!");
         System.out.println();
-        board.print();
+        board.print(true);
         System.out.println();
         System.out.println("Take a shot!");
         System.out.println();
 
         Coordinate target = readShotCoordinate(scanner, board.getSize());
-        board.applyShot(target);
+        boolean hit = board.applyShot(target);
 
         System.out.println();
-        board.print();
+        board.print(true);
         System.out.println();
 
-        if (board.wasHitLastShot()) {
-            System.out.println("You hit a ship!");
-        } else {
-            System.out.println("You missed!");
-        }
+        System.out.println(hit ? "You hit a ship!" : "You missed!");
+        System.out.println();
+
+        board.print(false);
     }
 
     private static void placeShipLoop(Scanner scanner, Board board, ShipType shipType) {
@@ -78,7 +77,7 @@ public class Main {
 
             board.place(placement.getCells());
             System.out.println();
-            board.print();
+            board.print(false);
             break;
         }
     }
